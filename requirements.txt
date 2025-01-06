@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+pymongo
+motor
+mysql-connector-python
+sqlalchemy
+pymysql
+redis
+aioredis
+pyjwt
