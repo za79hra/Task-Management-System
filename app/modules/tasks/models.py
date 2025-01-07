@@ -1,11 +1,4 @@
-# from pymongo import ASCENDING
-# from app.database.mongodb import mongo_db
-#
-# tasks_collection = mongo_db.get_collection("tasks")
-# tasks_collection.create_index([("user_id", ASCENDING), ("status", ASCENDING)])
-
 from pydantic import BaseModel, Field
-from datetime import datetime
 from typing import Optional
 from enum import Enum
 

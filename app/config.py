@@ -1,17 +1,31 @@
 import os
-# from pydantic import BaseSettings
-from pydantic_settings import BaseSettings
+from dotenv import load_dotenv
+from typing import ClassVar
+
+load_dotenv()
 
 
-class Settings(BaseSettings):
-    APP_NAME: str = "Task Manager"
-    MONGO_URI: str = os.getenv("MONGO_URI", "mongodb://localhost:27017/task_manager")
-    MONGO_USER: str = os.getenv("MONGO_USER", "admin")
-    MONGO_PASS: str = os.getenv("MONGO_PASS", "secret")
-    MYSQL_URI: str = os.getenv("MYSQL_URI", "mysql+pymysql://user:password@localhost/task_db")
-    JWT_SECRET: str = os.getenv("JWT_SECRET", "supersecretkey")
-    REDIS_URI: str = os.getenv("REDIS_URI", "redis://localhost:6379/0")
-    MONGO_HOST: str = os.getenv("MONGO_HOST", "localhost")
-    MONGO_PORT: int = os.getenv("MONGO_PORT", "27017")
+class Settings:
+    APP_NAME = os.getenv("APP_NAME")
+    MONGO_URI = os.getenv("MONGO_URI")
+    MONGO_USER = os.getenv("MONGO_USER")
+    MONGO_PASS = os.getenv("MONGO_PASS")
+    MYSQL_URI = os.getenv("MYSQL_URI")
+    JWT_SECRET = os.getenv("JWT_SECRET")
+    REDIS_URI = os.getenv("REDIS_URI")
+    MONGO_HOST = os.getenv("MONGO_HOST")
+    MONGO_PORT = int(os.getenv("MONGO_PORT"))
+    NUM_ALLOWED_TASK: ClassVar[int] = int(os.getenv("NUM_ALLOWED_TASK"))
 
-settings = Settings()
+
+# if __name__ == "__main__":
+#     print(f"App Name: {Settings.APP_NAME}")
+#     print(f"Mongo URI: {Settings.MONGO_URI}")
+#     print(f"Mongo User: {Settings.MONGO_USER}")
+#     print(f"Mongo Password: {Settings.MONGO_PASS}")
+#     print(f"MySQL URI: {Settings.MYSQL_URI}")
+#     print(f"JWT Secret: {Settings.JWT_SECRET}")
+#     print(f"Redis URI: {Settings.REDIS_URI}")
+#     print(f"Mongo Host: {Settings.MONGO_HOST}")
+#     print(f"Mongo Port: {Settings.MONGO_PORT}")
+#     print(f"Number of Allowed Tasks: {Settings.NUM_ALLOWED_TASK}")
