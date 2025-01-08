@@ -17,15 +17,7 @@ class Settings:
     MONGO_PORT = int(os.getenv("MONGO_PORT"))
     NUM_ALLOWED_TASK: ClassVar[int] = int(os.getenv("NUM_ALLOWED_TASK"))
 
-
-# if __name__ == "__main__":
-#     print(f"App Name: {Settings.APP_NAME}")
-#     print(f"Mongo URI: {Settings.MONGO_URI}")
-#     print(f"Mongo User: {Settings.MONGO_USER}")
-#     print(f"Mongo Password: {Settings.MONGO_PASS}")
-#     print(f"MySQL URI: {Settings.MYSQL_URI}")
-#     print(f"JWT Secret: {Settings.JWT_SECRET}")
-#     print(f"Redis URI: {Settings.REDIS_URI}")
-#     print(f"Mongo Host: {Settings.MONGO_HOST}")
-#     print(f"Mongo Port: {Settings.MONGO_PORT}")
-#     print(f"Number of Allowed Tasks: {Settings.NUM_ALLOWED_TASK}")
+    SECRET_KEY = os.getenv("SECRET_KEY")
+    ALGORITHM = os.getenv("ALGORITHM")
+    ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+    REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS"))

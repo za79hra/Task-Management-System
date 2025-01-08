@@ -12,7 +12,9 @@ class MongoConnection:
                                           ) if not self.client else self.client
 
         self.db = self.client['db-task-manager']
-        self.users = self.db['tasks']
+        self.tasks = self.db['tasks']
+        self.users = self.db['users']
+        self.otp = self.db['otp']
 
     def __enter__(self):
         return self

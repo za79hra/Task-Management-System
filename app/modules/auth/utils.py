@@ -1,42 +1,38 @@
+from fastapi import status
 import jwt
-from datetime import datetime, timedelta
-from app.config import settings
-
-# def create_jwt_token(data: dict, expires_delta: timedelta = timedelta(hours=1)):
-#     """
-#     تولید توکن JWT
-#     """
-#     to_encode = data.copy()
-#     expire = datetime.utcnow() + expires_delta
-#     to_encode.update({"exp": expire})
-#     encoded_jwt = jwt.encode(to_encode, settings.JWT_SECRET, algorithm="HS256")
-#     return encoded_jwt
-
-# auth/auth_header.py
-
-from fastapi import Depends, HTTPException
-from typing import List, Tuple
-from .auth_service import get_current_user  # فرض می‌شود این تابع اطلاعات کاربر را از توکن استخراج می‌کند
+import datetime
+from fastapi import HTTPException
+from app.config import Settings
 
 
-# class AuthHeader:
-#     def __init__(self, role_names: List[str] = None, active: bool = True):
-#         self.role_names = role_names
-#         self.active = active
-#
-#     async def auth(self, current_user: dict = Depends(get_current_user)) -> Tuple[dict, dict]:
-#         """
-#         بررسی توکن و نقش کاربر برای دسترسی به بخش‌های مختلف
-#         """
-#         if not current_user:
-#             raise HTTPException(status_code=401, detail="کاربر وارد نشده است")
-#
-#         # بررسی وضعیت فعال بودن حساب کاربری
-#         if not self.active or not current_user.get("is_active"):
-#             raise HTTPException(status_code=403, detail="حساب کاربری غیرفعال است")
-#
-#         # بررسی نقش‌های مجاز
-#         if self.role_names and current_user.get("role") not in self.role_names:
-#             raise HTTPException(status_code=403, detail="دسترسی غیرمجاز")
-#
-#         return current_user, {"access_token": "some_access_token", "refresh_token": "some_refresh_token"}
+def create_tokens(user_id: str, role: str):
+    current_time = datetime.datetime.utcnow()
+
+    access_token_payload = {
+        "user_id": user_id,
+        "role": role,
+        "exp": current_time + datetime.timedelta(minutes=Settings.ACCESS_TOKEN_EXPIRE_MINUTES),
+        "type": "access"
+    }
+    access_token = jwt.encode(access_token_payload, Settings.SECRET_KEY, algorithm="HS256")
+
+    refresh_token_payload = {
+        "user_id": user_id,
+        "exp": current_time + datetime.timedelta(days=Settings.REFRESH_TOKEN_EXPIRE_DAYS),
+        "type": "refresh"
+    }
+    refresh_token = jwt.encode(refresh_token_payload, Settings.SECRET_KEY, algorithm="HS256")
+
+    return access_token, refresh_token
+
+
+def verify_token(token: str, token_type: str):
+    try:
+        payload = jwt.decode(token, Settings.SECRET_KEY, algorithms=["HS256"])
+        if payload.get("type") != token_type:
+            raise jwt.InvalidTokenError("Invalid token type")
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired")
+    except jwt.InvalidTokenError as e:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(e))

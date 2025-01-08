@@ -1,11 +1,30 @@
-from sqlalchemy import Column, Integer, String, Boolean
-# from app.database.mysql import Base
+from pydantic import BaseModel, field_validator
+import re
 
-# class User(Base):
-#     __tablename__ = "users"
-#
-#     id = Column(Integer, primary_key=True, index=True)
-#     username = Column(String, unique=True, nullable=False)
-#     hashed_password = Column(String, nullable=False)
-#     is_active = Column(Boolean, default=True)
-#     role = Column(String, default="user")
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+
+class PhoneNumber(BaseModel):
+    phone: str
+
+    @field_validator('phone')
+    def validate_phone(cls, v):
+        if not re.match(r"^(?:\+98|0)9\d{9}$", v):
+            raise ValueError("Invalid phone number format. Use +989XXXXXXXXX or 09XXXXXXXXX.")
+        return v
+
+
+class RegisterUser(BaseModel):
+    phone: str
+    username: str
+    password: str
+    otp: str
+    role: str
+
+
+class LoginUser(BaseModel):
+    username: str
+    password: str
