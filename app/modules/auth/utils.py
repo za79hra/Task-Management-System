@@ -1,8 +1,28 @@
-from fastapi import status
 import jwt
 import datetime
-from fastapi import HTTPException
 from app.config import Settings
+from fastapi import HTTPException, status
+
+import logging
+
+USER_ROLE = ['admin', 'user']
+ADMIN_ROLE = ['admin']
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+async def role_required(token: str, required_roles: list):
+    try:
+        logger.info(f"Verifying token: {token}")
+        payload = verify_token(token, "access")
+        if payload["role"] not in required_roles:
+            logger.warning(f"Access forbidden for role: {payload['role']}")
+            raise HTTPException(status_code=403, detail="Access forbidden")
+        logger.info(f"Access granted for user with role: {payload['role']}")
+        return payload  # Return the payload if the role is valid
+    except Exception as e:
+        logger.error(f"Error verifying token: {str(e)}")
+        raise HTTPException(status_code=401, detail="Your access is not correct")
 
 
 def create_tokens(user_id: str, role: str):
